@@ -39,13 +39,25 @@ function skip() {
   video.currentTime += parseFloat(this.dataset.skip); // Converts the string into a number.
 }
 
+// Allows for the volume and speed of playback to change.
 function handleRangeUpdate() {
   video[this.name] = this.value;
   // console.log(this.name)
   // console.log(this.value);
 }
 
+// Moves the progress bar along as time passes.
+function handleProgress() {
+  const percent = (video.currentTime / video.duration) * 100;
+  progressBar.style.flexBasis = `${percent}%`
+}
 
+// Allows the user to scrub playback.
+function scrubPlayback(event) {
+  const scrubTime = (event.offsetX / progress.offsetWidth) * video.duration;
+  video.currentTime = scrubTime;
+  console.log(event)
+}
 
 
 // Hook up event listeners
@@ -58,9 +70,16 @@ video.addEventListener('play', updateButton); // Toggles the video when player i
 
 video.addEventListener('pause', updateButton); // Toggles the video when player is clicked.
 
+video.addEventListener('timeupdate', handleProgress); // Moves the progress bar along as time passes.
 
 skipButtons.forEach(button => button.addEventListener('click', skip)); // Each skip button will function when clicked.
 
 ranges.forEach(range => range.addEventListener('change', handleRangeUpdate)); // On a change, the ranges will update.
 
 ranges.forEach(range => range.addEventListener('mousemove', handleRangeUpdate)); // Will change as the slider is moved.
+
+let mouseDown = false;
+progress.addEventListener('click', scrubPlayback); // Allows user to move from one time to another on the progress bar.
+progress.addEventListener('mousemove', (event) => mouseDown && scrubPlayback(event)); // Current time changes based on mouse movement with the passed event.
+progress.addEventListener('mousedown', () => mouseDown = true)
+progress.addEventListener('mouseup', () => mouseDown = false)
