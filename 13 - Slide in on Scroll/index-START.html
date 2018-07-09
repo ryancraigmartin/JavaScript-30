@@ -43,6 +43,7 @@
   </div>
 
   <script>
+    // This function is passed a function but will only run it once within a specified time.
     function debounce(func, wait = 20, immediate = true) {
       var timeout;
       return function() {
@@ -57,6 +58,32 @@
         if (callNow) func.apply(context, args);
       };
     }
+
+    const sliderImages = document.querySelectorAll('.slide-in');
+
+    function checkSlide(e) {
+      // Loop over each image and figure out where the image needs to be shown.
+      sliderImages.forEach(sliderImage => {
+        // Halfway point for the image
+        const slideInAt = (window.scrollY + window.innerHeight) - sliderImage.height / 2;
+        // Represents the bottom of the image.
+        const imageBottom = sliderImage.offsetTop + sliderImage.height;
+        const isHalfShown = slideInAt > sliderImage.offsetTop;
+        const isNotScrolledPast = window.scrollY < imageBottom;
+
+        if(isHalfShown && isNotScrolledPast) {
+          sliderImage.classList.add('active')
+        } else {
+          sliderImage.classList.remove('active')
+        }
+
+
+        console.log(slideInAt)
+      })
+
+    }
+
+    window.addEventListener('scroll', debounce(checkSlide));
 
   </script>
 
